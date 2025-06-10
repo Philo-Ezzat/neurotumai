@@ -1,4 +1,4 @@
-name: Deploy to Azure
+name: Deploy to Azure VM
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: NeuroTumAIAPIs
-  AZURE_WEBAPP_PACKAGE_PATH: 'publish'
   DOTNET_VERSION: '8.0.x'
-  RESOURCE_GROUP: 'gradProject'
+  PUBLISH_PATH: 'publish'
+  VM_IP: '74.179.80.22'  # Replace with your VM's IP
+  SSH_USERNAME: 'philopatir'
 
 jobs:
   build-and-deploy:
@@ -23,11 +23,6 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
     - name: Restore
       run: dotnet restore ./NeuroTumAI.APIs-N/NeuroTumAI.Solution.sln
       
@@ -35,10 +30,24 @@ jobs:
       run: dotnet build ./NeuroTumAI.APIs-N/NeuroTumAI.Solution.sln --configuration Release --no-restore
       
     - name: Publish
-      run: dotnet publish ./NeuroTumAI.APIs-N/NeuroTumAI.APIs/NeuroTumAI.APIs.csproj -c Release -o ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
-      
-    - name: Deploy to Azure
-      uses: azure/webapps-deploy@v2
+      run: dotnet publish ./NeuroTumAI.APIs-N/NeuroTumAI.APIs/NeuroTumAI.APIs.csproj -c Release -o ${{env.PUBLISH_PATH}}
+
+    - name: Deploy to VM
+      uses: appleboy/scp-action@master
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        host: ${{ env.VM_IP }}
+        username: ${{ env.SSH_USERNAME }}
+        key: '#Password#123'
+        source: "${{ env.PUBLISH_PATH }}/*"
+        target: "/var/www/neurotumai"
+        strip_components: 1
+
+    - name: Configure and Restart Service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.VM_IP }}
+        username: ${{ env.SSH_USERNAME }}
+        key: '#Password#123'
+        script: |
+          sudo chown -R www-data:www-data /var/www/neurotumai
+          sudo systemctl restart neurotumai
