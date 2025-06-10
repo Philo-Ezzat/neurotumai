@@ -1,4 +1,4 @@
-name: Deploy to Azure VM
+name: Build NeuroTumAI
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   PUBLISH_PATH: 'publish'
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     
     steps:
@@ -29,5 +29,9 @@ jobs:
       
     - name: Publish
       run: dotnet publish ./NeuroTumAI.APIs-N/NeuroTumAI.APIs/NeuroTumAI.APIs.csproj -c Release -o ${{env.PUBLISH_PATH}}
-
-        "
+    
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: neurotumai-build
+        path: ${{ env.PUBLISH_PATH }}
