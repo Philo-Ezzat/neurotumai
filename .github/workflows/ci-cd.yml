@@ -8,7 +8,7 @@ on:
 env:
   DOTNET_VERSION: '8.0.x'
   PUBLISH_PATH: 'publish'
-  VM_IP: '74.179.80.22'  # Replace with your VM's IP
+  VM_IP: '74.179.80.22'
   SSH_USERNAME: 'philopatir'
 
 jobs:
@@ -32,22 +32,20 @@ jobs:
     - name: Publish
       run: dotnet publish ./NeuroTumAI.APIs-N/NeuroTumAI.APIs/NeuroTumAI.APIs.csproj -c Release -o ${{env.PUBLISH_PATH}}
 
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+    
+    - name: Create target directory
+      run: |
+        sshpass -p "#Password#123" ssh -o StrictHostKeyChecking=no ${{ env.SSH_USERNAME }}@${{ env.VM_IP }} "sudo mkdir -p /var/www/neurotumai"
+
     - name: Deploy to VM
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ env.VM_IP }}
-        username: ${{ env.SSH_USERNAME }}
-        key: '#Password#123'
-        source: "${{ env.PUBLISH_PATH }}/*"
-        target: "/var/www/neurotumai"
-        strip_components: 1
+      run: |
+        sshpass -p "#Password#123" scp -o StrictHostKeyChecking=no -r ${{env.PUBLISH_PATH}}/* ${{ env.SSH_USERNAME }}@${{ env.VM_IP }}:/var/www/neurotumai/
 
     - name: Configure and Restart Service
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ env.VM_IP }}
-        username: ${{ env.SSH_USERNAME }}
-        key: '#Password#123'
-        script: |
-          sudo chown -R www-data:www-data /var/www/neurotumai
+      run: |
+        sshpass -p "#Password#123" ssh -o StrictHostKeyChecking=no ${{ env.SSH_USERNAME }}@${{ env.VM_IP }} "
+          sudo chown -R www-data:www-data /var/www/neurotumai &&
           sudo systemctl restart neurotumai
+        "
