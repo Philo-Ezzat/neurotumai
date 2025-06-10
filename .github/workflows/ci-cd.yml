@@ -29,13 +29,13 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
     - name: Restore
-      run: dotnet restore NeuroTumAI.Solution.sln
+      run: dotnet restore ./NeuroTumAI.APIs-N/NeuroTumAI.Solution.sln
       
     - name: Build
-      run: dotnet build NeuroTumAI.Solution.sln --configuration Release --no-restore
+      run: dotnet build ./NeuroTumAI.APIs-N/NeuroTumAI.Solution.sln --configuration Release --no-restore
       
     - name: Publish
-      run: dotnet publish NeuroTumAI.APIs/NeuroTumAI.APIs.csproj -c Release -o ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
+      run: dotnet publish ./NeuroTumAI.APIs-N/NeuroTumAI.APIs/NeuroTumAI.APIs.csproj -c Release -o ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
       
     - name: Deploy to Azure
       uses: azure/webapps-deploy@v2
