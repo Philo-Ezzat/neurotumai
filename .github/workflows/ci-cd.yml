@@ -1,0 +1,44 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: NeuroTumAIAPIs
+  AZURE_WEBAPP_PACKAGE_PATH: 'publish'
+  DOTNET_VERSION: '8.0.x'
+  RESOURCE_GROUP: 'gradProject'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Restore
+      run: dotnet restore NeuroTumAI.Solution.sln
+      
+    - name: Build
+      run: dotnet build NeuroTumAI.Solution.sln --configuration Release --no-restore
+      
+    - name: Publish
+      run: dotnet publish NeuroTumAI.APIs/NeuroTumAI.APIs.csproj -c Release -o ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
+      
+    - name: Deploy to Azure
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
