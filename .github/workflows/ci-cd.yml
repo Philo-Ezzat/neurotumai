@@ -31,7 +31,7 @@ jobs:
       run: dotnet publish ./NeuroTumAI.APIs-N/NeuroTumAI.APIs/NeuroTumAI.APIs.csproj -c Release -o ${{env.PUBLISH_PATH}}
     
     - name: Upload Build Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: neurotumai-build
         path: ${{ env.PUBLISH_PATH }}
