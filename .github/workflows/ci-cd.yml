@@ -8,8 +8,6 @@ on:
 env:
   DOTNET_VERSION: '8.0.x'
   PUBLISH_PATH: 'publish'
-  VM_IP: '74.179.80.22'
-  SSH_USERNAME: 'philopatir'
 
 jobs:
   build-and-deploy:
@@ -32,20 +30,4 @@ jobs:
     - name: Publish
       run: dotnet publish ./NeuroTumAI.APIs-N/NeuroTumAI.APIs/NeuroTumAI.APIs.csproj -c Release -o ${{env.PUBLISH_PATH}}
 
-    - name: Install sshpass
-      run: sudo apt-get install -y sshpass
-    
-    - name: Create target directory
-      run: |
-        sshpass -p "#Password#123" ssh -o StrictHostKeyChecking=no ${{ env.SSH_USERNAME }}@${{ env.VM_IP }} "sudo mkdir -p /var/www/neurotumai"
-
-    - name: Deploy to VM
-      run: |
-        sshpass -p "#Password#123" scp -o StrictHostKeyChecking=no -r ${{env.PUBLISH_PATH}}/* ${{ env.SSH_USERNAME }}@${{ env.VM_IP }}:/var/www/neurotumai/
-
-    - name: Configure and Restart Service
-      run: |
-        sshpass -p "#Password#123" ssh -o StrictHostKeyChecking=no ${{ env.SSH_USERNAME }}@${{ env.VM_IP }} "
-          sudo chown -R www-data:www-data /var/www/neurotumai &&
-          sudo systemctl restart neurotumai
         "
