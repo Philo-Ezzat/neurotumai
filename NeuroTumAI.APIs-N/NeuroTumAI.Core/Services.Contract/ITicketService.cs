@@ -20,6 +20,7 @@ namespace NeuroTumAI.Core.Services.Contract
         Task<Ticket> AddTicketAsync(AddTicketDto model);
         Task<Ticket> UpdateLabIdAsync(int ticketId, UpdateLabIdDto model);
         Task<Ticket> UpdateMRIAsync(int ticketId, PredictRequestDto model);
+        Task<Ticket> CompleteTicketAsync(int ticketId, CompleteTicketDto model);
 
         //Task<ToggleLikeResponseDto> ToggleLikeAsync(string userId, int postId);
         //Task<AddCommentResponseDto> AddCommentAsync(string userId, int postId, AddCommentDto model);

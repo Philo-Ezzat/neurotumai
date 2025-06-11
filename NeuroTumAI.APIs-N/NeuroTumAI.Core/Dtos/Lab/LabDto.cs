@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace NeuroTumAI.Core.Dtos.Lab
 {
@@ -11,6 +12,7 @@ namespace NeuroTumAI.Core.Dtos.Lab
 	{
 		public string Name { get; set; }
         public string PhoneNumber { get; set; }
+        public IFormFile Image { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
 

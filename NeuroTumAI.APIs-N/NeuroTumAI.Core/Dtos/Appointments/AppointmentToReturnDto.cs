@@ -12,5 +12,7 @@ namespace NeuroTumAI.Core.Dtos.Appointments
 		public DateOnly Date { get; set; }
 		public TimeOnly StartTime { get; set; }
         public string Status { get; set; }
+        public int TicketId { get; set; }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using NeuroTumAI.Core.Entities;
 using NeuroTumAI.Core.Entities.Admin;
 using NeuroTumAI.Core.Entities.Appointment;
 using NeuroTumAI.Core.Entities.Contact_Us;
@@ -20,7 +21,11 @@ namespace NeuroTumAI.Repository.Data
 		{
 			modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 			base.OnModelCreating(modelBuilder);
-		}
+
+            modelBuilder.Entity<Ticket>()
+			.Property(t => t.Status)
+			.HasConversion<string>();
+        }
 
 		//public DbSet<Doctor> Doctors { get; set; }
 		public DbSet<Patient> Patients { get; set; }

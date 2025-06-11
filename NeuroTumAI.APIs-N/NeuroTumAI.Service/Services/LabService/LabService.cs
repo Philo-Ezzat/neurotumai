@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.IO;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using NeuroTumAI.Core;
@@ -17,7 +18,10 @@ using NeuroTumAI.Core.Specifications.ClinicSpecs;
 using NeuroTumAI.Core.Specifications.PostSpecs.LikeSpecs;
 using NeuroTumAI.Service.Hubs;
 using NeuroTumAI.Service.Services.BlobStorageService;
+using NeuroTumAI.Service.Services.CancerDetectionService;
+using NeuroTumAI.Service.Services.LocalizationService;
 using Newtonsoft.Json;
+using Quartz.Util;
 
 namespace NeuroTumAI.Service.Services.LabService
 {
@@ -26,14 +30,16 @@ namespace NeuroTumAI.Service.Services.LabService
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IHubContext<PostHub> _hubContext;
 		private readonly ILocalizationService _localizationService;
+        private readonly IBlobStorageService _blobStorageService;
         private readonly UserManager<ApplicationUser> _userManager;
 
 
-        public LabService(IUnitOfWork unitOfWork,IHubContext<PostHub> hubContext,ILocalizationService localizationService, UserManager<ApplicationUser> userManager)
+        public LabService(IUnitOfWork unitOfWork,IHubContext<PostHub> hubContext,ILocalizationService localizationService,IBlobStorageService blobStorageService, UserManager<ApplicationUser> userManager)
 		{
 			_unitOfWork = unitOfWork;
 			_hubContext = hubContext;
 			_localizationService = localizationService;
+            _blobStorageService = blobStorageService;
             _userManager = userManager;
 
         }
@@ -57,6 +63,9 @@ namespace NeuroTumAI.Service.Services.LabService
 
 		public async Task<Lab> AddLabAsync(LabDto model)
 		{
+            using var stream = model.Image.OpenReadStream();
+            var fileUrl = await _blobStorageService.UploadFileAsync(stream, model.Image.FileName, "lab-images");
+
 
             var newAccount = new ApplicationUser()
             {
@@ -80,6 +89,7 @@ namespace NeuroTumAI.Service.Services.LabService
             {
                 Name = model.Name,
                 PhoneNumber = model.PhoneNumber,
+				ImagePath = fileUrl,
                 ApplicationUserId = newAccount.Id
 
             };

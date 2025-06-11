@@ -14,7 +14,8 @@ namespace NeuroTumAI.Core.Entities
 	public class Lab : BaseEntity
 	{
 		public string Name { get; set; }
-		public string PhoneNumber { get; set; }
+		public string? PhoneNumber { get; set; }
+        public string? ImagePath { get; set; }
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
     }

@@ -19,5 +19,7 @@ namespace NeuroTumAI.Core.Entities.Appointment
         public Clinic Clinic { get; set; }
         public int PatientId { get; set; }
 		public Patient Patient { get; set; }
-	}
+        public int? TicketId { get; set; }
+        public Ticket Ticket { get; set; }
+    }
 }

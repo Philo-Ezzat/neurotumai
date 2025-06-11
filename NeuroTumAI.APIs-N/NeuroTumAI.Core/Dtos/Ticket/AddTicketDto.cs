@@ -12,5 +12,7 @@ namespace NeuroTumAI.Core.Dtos.Post
         public int PatientId { get; set; }
         public string DrInitialDesc { get; set; }
         public bool NeedMRI { get; set; }
+        public int AppId { get; set; }
+
     }
 }

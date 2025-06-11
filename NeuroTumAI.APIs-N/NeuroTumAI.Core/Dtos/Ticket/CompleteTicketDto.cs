@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace NeuroTumAI.Core.Dtos.Post
 {
-	public class UpdateLabIdDto
+	public class CompleteTicketDto
 	{
-        public int LabId { get; set; }
-        public DateTime LabDate { get; set; }
+        public string DrFinalDesc { get; set; }
     }
 }

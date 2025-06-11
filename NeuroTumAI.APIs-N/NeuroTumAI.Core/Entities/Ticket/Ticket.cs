@@ -14,10 +14,7 @@ namespace NeuroTumAI.Core.Entities
 {
     public enum TicketStatus
     {
-        Opened,
-        NoMri,
-        HasMri,
-        Closed
+        Pending,Reviewed,Completed
     }
     public class Ticket : BaseEntity
 	{
@@ -26,13 +23,14 @@ namespace NeuroTumAI.Core.Entities
 		public string? DrInitialDesc { get; set; }
 		public bool NeedMRI { get; set; } = false;
         public int? LabId { get; set; }
+        public DateTime? LabDate { get; set; }
         public string? LabDescribtion { get; set; }
         public string? ImagePath { get; set; }
         public string? DetectionClass { get; set; }
         public string? Confidence { get; set; }
         public string? AiGeneratedFilePath { get; set; }
         public string? DrFinalDesc { get; set; }
-        public TicketStatus Status { get; set; } = TicketStatus.Opened;
+        public TicketStatus Status { get; set; } = TicketStatus.Pending;
         public Patient Patient { get; set; }
         public Doctor Doctor { get; set; }
         public Lab Lab { get; set; }

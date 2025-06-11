@@ -127,6 +127,15 @@ namespace NeuroTumAI.APIs.Controllers.Ticket
 
             return Ok();
         }
+
+        [HttpPut("completeTicket/{ticketId}")]
+        public async Task<ActionResult> CompleteTicket(int ticketId, CompleteTicketDto model)
+        {
+
+            await _ticketService.CompleteTicketAsync(ticketId, model);
+
+            return Ok();
+        }
         //[HttpPost("toggleLike/{postId}")]
         //public async Task<ActionResult<ToggleLikeResponseDto>> Togglike(int postId)
         //{

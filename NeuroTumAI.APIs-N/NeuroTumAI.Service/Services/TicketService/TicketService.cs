@@ -100,14 +100,26 @@ namespace NeuroTumAI.Service.Services.TicketService
             };
 
             var ticketRepo = _unitOfWork.Repository<Ticket>();
-
             ticketRepo.Add(newTicket);
+
+            // Save to get the generated Ticket Id
+            await _unitOfWork.CompleteAsync();
+
+            var appRepo = _unitOfWork.Repository<Appointment>();
+            var app = await appRepo.GetAsync(model.AppId);
+            if (app is null)
+                throw new NotFoundException(_localizationService.GetMessage<ResponsesResources>("AppointmentNotFound"));
+
+            app.TicketId = newTicket.Id;
+            appRepo.Update(app);
+
             await _unitOfWork.CompleteAsync();
 
             Console.WriteLine(JsonConvert.SerializeObject(model));
 
             return newTicket;
         }
+
 
         public async Task<Ticket> UpdateLabIdAsync(int ticketId, UpdateLabIdDto model)
         {
@@ -117,6 +129,7 @@ namespace NeuroTumAI.Service.Services.TicketService
                 throw new NotFoundException(_localizationService.GetMessage<ResponsesResources>("TicketNotFound"));
 
             ticket.LabId = model.LabId;
+            ticket.LabDate = model.LabDate;
             ticketRepo.Update(ticket);
 
             await _unitOfWork.CompleteAsync();
@@ -137,10 +150,27 @@ namespace NeuroTumAI.Service.Services.TicketService
                 throw new NotFoundException(_localizationService.GetMessage<ResponsesResources>("TicketNotFound"));
 
             ticket.ImagePath = fileUrl;
+            ticket.Status = TicketStatus.Reviewed;
             ticketRepo.Update(ticket);
 
             await _unitOfWork.CompleteAsync();
             return ticket;
+        }
+
+        public async Task<Ticket> CompleteTicketAsync(int ticketId, CompleteTicketDto model)
+        {
+            var ticketRepo = _unitOfWork.Repository<Ticket>();
+            var ticket = await ticketRepo.GetAsync(ticketId);
+            if (ticket is null)
+                throw new NotFoundException(_localizationService.GetMessage<ResponsesResources>("TicketNotFound"));
+
+            ticket.DrFinalDesc = model.DrFinalDesc;
+            ticket.Status = TicketStatus.Completed;
+            ticketRepo.Update(ticket);
+
+            await _unitOfWork.CompleteAsync();
+            return ticket;
+
         }
 
 
