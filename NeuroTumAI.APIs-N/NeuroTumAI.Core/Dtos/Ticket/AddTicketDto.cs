@@ -8,11 +8,11 @@ namespace NeuroTumAI.Core.Dtos.Post
 {
 	public class AddTicketDto
 	{
-        public int DoctorId { get; set; }
-        public int PatientId { get; set; }
+        public string DoctorId { get; set; }
+        public string PatientId { get; set; }
         public string DrInitialDesc { get; set; }
         public bool NeedMRI { get; set; }
-        public int AppId { get; set; }
+        public string AppId { get; set; }
 
     }
 }

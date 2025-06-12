@@ -104,10 +104,8 @@ namespace NeuroTumAI.APIs.Controllers.Ticket
         [HttpPost]
         public async Task<ActionResult> AddTicket(AddTicketDto model)
         {
-
-            await _ticketService.AddTicketAsync(model);
-
-            return Ok();
+            var ticket = await _ticketService.AddTicketAsync(model);
+            return Ok(ticket);
         }
 
         [HttpPut("updateLabId/{ticketId}")]

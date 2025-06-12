@@ -235,7 +235,8 @@ namespace NeuroTumAI.Service.Services.AccountService
 				return new LoginResponseDto()
 				{
 					Token = token,
-					User = _mapper.Map<UserDto>(patient)
+					User = _mapper.Map<UserDto>(patient),
+					RealId = patient.Id
 				};
 			}
 			else if (isDoctor)
@@ -251,7 +252,8 @@ namespace NeuroTumAI.Service.Services.AccountService
 				return new LoginResponseDto()
 				{
 					Token = token,
-					User = _mapper.Map<UserDto>(doctor)
+					User = _mapper.Map<UserDto>(doctor),
+					RealId = doctor.Id
 				};
 			}
             else
@@ -267,7 +269,8 @@ namespace NeuroTumAI.Service.Services.AccountService
                 return new LoginResponseDto()
                 {
                     Token = token,
-                    User = _mapper.Map<UserDto>(lab)
+                    User = _mapper.Map<UserDto>(lab),
+                    RealId = lab.Id
                 };
             }
         }

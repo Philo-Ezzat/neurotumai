@@ -10,5 +10,6 @@ namespace NeuroTumAI.Core.Dtos.Account
 	{
         public string Token { get; set; }
         public UserDto User { get; set; }
+        public int RealId { get; set; }
     }
 }

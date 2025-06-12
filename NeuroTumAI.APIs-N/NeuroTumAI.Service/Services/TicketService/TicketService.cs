@@ -91,10 +91,24 @@ namespace NeuroTumAI.Service.Services.TicketService
 
         public async Task<Ticket> AddTicketAsync(AddTicketDto model)
         {
+            // Get the Doctor entity where ApplicationUserId == model.DoctorId
+            var doctorRepo = _unitOfWork.Repository<Doctor>();
+            var doctor = await doctorRepo.GetAllAsync(q => q.Where(d => d.ApplicationUserId == model.DoctorId));
+            var doctorEntity = doctor.FirstOrDefault();
+            if (doctorEntity == null)
+                throw new NotFoundException(_localizationService.GetMessage<ResponsesResources>("DoctorNotFound"));
+
+            // Get the Patient entity where ApplicationUserId == model.PatientId
+            var patientRepo = _unitOfWork.Repository<Patient>();
+            var patient = await patientRepo.GetAllAsync(q => q.Where(d => d.ApplicationUserId == model.PatientId));
+            var patientEntity = patient.FirstOrDefault();
+            if (patientEntity == null)
+                throw new NotFoundException(_localizationService.GetMessage<ResponsesResources>("PatientNotFound"));
+
             var newTicket = new Ticket()
             {
-                DoctorId = model.DoctorId,
-                PatientId = model.PatientId,
+                DoctorId = doctorEntity.Id,
+                PatientId = patientEntity.Id,
                 DrInitialDesc = model.DrInitialDesc,
                 NeedMRI = model.NeedMRI,
             };
@@ -106,7 +120,10 @@ namespace NeuroTumAI.Service.Services.TicketService
             await _unitOfWork.CompleteAsync();
 
             var appRepo = _unitOfWork.Repository<Appointment>();
-            var app = await appRepo.GetAsync(model.AppId);
+            if (!int.TryParse(model.AppId, out int appId))
+                throw new ArgumentException("Invalid AppId format", nameof(model.AppId));
+
+            var app = await appRepo.GetAsync(appId);
             if (app is null)
                 throw new NotFoundException(_localizationService.GetMessage<ResponsesResources>("AppointmentNotFound"));
 
