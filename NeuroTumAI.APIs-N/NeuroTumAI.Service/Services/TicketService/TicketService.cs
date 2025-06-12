@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System.Net.Http.Headers;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NeuroTumAI.Core;
 using NeuroTumAI.Core.Dtos.CancerPrediction;
 using NeuroTumAI.Core.Dtos.Notification;
@@ -173,6 +175,47 @@ namespace NeuroTumAI.Service.Services.TicketService
             await _unitOfWork.CompleteAsync();
             return ticket;
         }
+
+
+        public async Task<Ticket> UpdatePDFAsync(int ticketId, PredictRequestDto model)
+        {
+            using var form = new MultipartFormDataContent();
+
+            // Prepare the image file content
+            using var stream = model.Image.OpenReadStream();
+            var fileContent = new StreamContent(stream);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(model.Image.ContentType);
+
+            // Add image to form-data (key should match what the prediction API expects)
+            form.Add(fileContent, "images", model.Image.FileName);
+
+            // Send form to prediction service
+            var pdfBytes = await _cancerDetectionService.PredictCancerPDFAsync(form);
+
+
+            // Convert byte[] to Stream
+            using var pdfStream = new MemoryStream(pdfBytes);
+
+            // Generate a dynamic filename for the PDF
+            var pdfFileName = $"cancer-prediction-{ticketId}-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
+
+            // Upload the PDF to blob storage
+            var pdfUrl = await _blobStorageService.UploadFileAsync(pdfStream, pdfFileName, "patient-cancer-reports");
+
+            // Update the ticket
+            var ticketRepo = _unitOfWork.Repository<Ticket>();
+            var ticket = await ticketRepo.GetAsync(ticketId);
+            if (ticket is null)
+                throw new NotFoundException(_localizationService.GetMessage<ResponsesResources>("TicketNotFound"));
+
+            ticket.AiGeneratedFilePath = pdfUrl;
+            ticket.Status = TicketStatus.Reviewed;
+            ticketRepo.Update(ticket);
+
+            await _unitOfWork.CompleteAsync();
+            return ticket; 
+        }
+
 
         public async Task<Ticket> CompleteTicketAsync(int ticketId, CompleteTicketDto model)
         {

@@ -27,5 +27,20 @@ namespace NeuroTumAI.Service.Services.CancerDetectionService
 			var result = await response.Content.ReadFromJsonAsync<CancerPredictionResultDto>();
 			return result!;
 		}
-	}
+
+        public async Task<byte[]> PredictCancerPDFAsync(MultipartFormDataContent form)
+        {
+            var response = await _httpClient.PostAsync("http://192.168.1.10:5000/analyze", form);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Prediction failed: {response.StatusCode} - {error}");
+            }
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
+
+    }
 }

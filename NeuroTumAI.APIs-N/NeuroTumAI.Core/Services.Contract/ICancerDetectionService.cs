@@ -10,5 +10,7 @@ namespace NeuroTumAI.Core.Services.Contract
 	public interface ICancerDetectionService
 	{
 		Task<CancerPredictionResultDto> PredictCancerAsync(string imageUrl);
-	}
+		Task<byte[]> PredictCancerPDFAsync(MultipartFormDataContent form);
+
+    }
 }

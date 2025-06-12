@@ -125,7 +125,14 @@ namespace NeuroTumAI.APIs.Controllers.Ticket
 
             return Ok();
         }
+        [HttpPut("updatePDF/{ticketId}")]
+        public async Task<ActionResult> UpdatePDF(int ticketId, PredictRequestDto model)
+        {
 
+            await _ticketService.UpdatePDFAsync(ticketId, model);
+
+            return Ok();
+        }
         [HttpPut("completeTicket/{ticketId}")]
         public async Task<ActionResult> CompleteTicket(int ticketId, CompleteTicketDto model)
         {
