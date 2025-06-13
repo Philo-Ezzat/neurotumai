@@ -13,5 +13,7 @@ namespace NeuroTumAI.Core.Dtos.Dashboard
 		public int Clinics { get; set; }
 		public int PendingClinics { get; set; }
 		public int Appointments { get; set; }
-	}
+        public int Labs { get; set; }
+
+    }
 }

@@ -2,6 +2,7 @@
 using NeuroTumAI.Core.Entities;
 using NeuroTumAI.Core.Repositories.Contract;
 using NeuroTumAI.Core.Specifications;
+using NeuroTumAI.Core.Specifications.LabSpecs;
 using NeuroTumAI.Repository.Data;
 
 namespace NeuroTumAI.Repository
@@ -66,5 +67,6 @@ namespace NeuroTumAI.Repository
 
 		public void Delete(T entity)
 			=> _dbContext.Set<T>().Remove(entity);
-	}
+
+    }
 }

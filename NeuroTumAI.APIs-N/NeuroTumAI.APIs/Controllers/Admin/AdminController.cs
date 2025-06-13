@@ -130,8 +130,8 @@ namespace NeuroTumAI.APIs.Controllers.Admin
 		{
 			var stats = await _dashboardService.GetStatisticsAsync();
 
-			return Ok(new { Data = stats });
-		}
+            return Ok(new { data = stats });
+        }
 
 		[Authorize(Roles = "Admin")]
 		[HttpGet("contactUsMessages")]

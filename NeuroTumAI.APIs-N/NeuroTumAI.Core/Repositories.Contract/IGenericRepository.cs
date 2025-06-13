@@ -1,5 +1,6 @@
 ﻿using NeuroTumAI.Core.Entities;
 using NeuroTumAI.Core.Specifications;
+using NeuroTumAI.Core.Specifications.LabSpecs;
 
 namespace NeuroTumAI.Core.Repositories.Contract
 {
@@ -16,5 +17,5 @@ namespace NeuroTumAI.Core.Repositories.Contract
 		void Update(T entity);
 		void Delete(T entity);
 		void RemoveRange(IEnumerable<T> entities);
-	}
+    }
 }

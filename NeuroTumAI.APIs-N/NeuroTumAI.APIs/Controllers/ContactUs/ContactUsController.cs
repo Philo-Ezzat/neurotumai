@@ -22,7 +22,7 @@ namespace NeuroTumAI.APIs.Controllers.ContactUs
 		}
 
         [HttpPost]
-        [Authorize(Roles = "Patient")]
+        [Authorize(Roles = "Patient,Doctor")]
         public async Task<ActionResult<ContactUsMessageToReturnDto>> SendMessage(ContactUsDto model)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

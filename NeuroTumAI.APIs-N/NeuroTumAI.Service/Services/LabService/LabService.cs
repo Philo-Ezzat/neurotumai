@@ -15,6 +15,8 @@ using NeuroTumAI.Core.Resources.Shared;
 using NeuroTumAI.Core.Resources.Validation;
 using NeuroTumAI.Core.Services.Contract;
 using NeuroTumAI.Core.Specifications.ClinicSpecs;
+using NeuroTumAI.Core.Specifications.DoctorSpecs;
+using NeuroTumAI.Core.Specifications.LabSpecs;
 using NeuroTumAI.Core.Specifications.PostSpecs.LikeSpecs;
 using NeuroTumAI.Service.Hubs;
 using NeuroTumAI.Service.Services.BlobStorageService;
@@ -54,14 +56,15 @@ namespace NeuroTumAI.Service.Services.LabService
         }
 
 
+        public async Task<int> GetCountAsync(LabSpecifications model)
+        {
+            var labRepo = _unitOfWork.Repository<Lab>();
+            var labSpecs = new LabSpecifications(model);
 
-		//public async Task<Lab> GetTicketByLabIdAsync(int labId)
-		//{
-		//	var labRepo = _unitOfWork.Repository<Lab>();
-		//	return await labRepo.GetAsync(labId);
-		//}
+            return await labRepo.GetCountAsync(labSpecs);
+        }
 
-		public async Task<Lab> AddLabAsync(LabDto model)
+        public async Task<Lab> AddLabAsync(LabDto model)
 		{
             using var stream = model.Image.OpenReadStream();
             var fileUrl = await _blobStorageService.UploadFileAsync(stream, model.Image.FileName, "lab-images");

@@ -10,7 +10,9 @@ namespace NeuroTumAI.Core.Specifications.LabSpecs
 {
 	public class LabSpecifications : BaseSpecifications<Lab>
 	{
-		public LabSpecifications()
+        private LabSpecifications model;
+
+        public LabSpecifications()
 			: base()
 		{
 
@@ -26,5 +28,10 @@ namespace NeuroTumAI.Core.Specifications.LabSpecs
 		{
 			Includes.Add(D => D.ApplicationUser);
 		}
-	}
+
+        public LabSpecifications(LabSpecifications model)
+        {
+            this.model = model;
+        }
+    }
 }

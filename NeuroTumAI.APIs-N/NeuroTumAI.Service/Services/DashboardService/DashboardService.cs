@@ -12,6 +12,7 @@ using NeuroTumAI.Core.Services.Contract;
 using NeuroTumAI.Core.Specifications.AppointmentSpecs;
 using NeuroTumAI.Core.Specifications.ClinicSpecs;
 using NeuroTumAI.Core.Specifications.DoctorSpecs;
+using NeuroTumAI.Core.Specifications.LabSpecs;
 
 namespace NeuroTumAI.Service.Services.DashboardService
 {
@@ -28,15 +29,17 @@ namespace NeuroTumAI.Service.Services.DashboardService
 			var clinicRepo = _unitOfWork.Repository<Clinic>();
 			var doctorRepo = _unitOfWork.Repository<Doctor>();
 			var appointmentRepo = _unitOfWork.Repository<Appointment>();
+            var lab = _unitOfWork.Repository<Lab>();
 
-			return new DashboardStatsDto
+            return new DashboardStatsDto
 			{
 				Clinics = await clinicRepo.GetCountAsync(new ClinicSpecifications()),
 				PendingClinics = await clinicRepo.GetCountAsync(new PendingClinicCountSpecifications(new PendingClinicSpecParams())),
 				Doctors = await doctorRepo.GetCountAsync(new DoctorSpecifications()),
 				PendingDoctors = await doctorRepo.GetCountAsync(new PendingDoctorCountSpecifications(new PendingDoctorSpecParams())),
-				Appointments = await appointmentRepo.GetCountAsync(new AppointmentSpecifications())
-			};
+				Appointments = await appointmentRepo.GetCountAsync(new AppointmentSpecifications()),
+				Labs = await lab.GetCountAsync(new LabSpecifications())
+            };
 		}
 	}
 }
