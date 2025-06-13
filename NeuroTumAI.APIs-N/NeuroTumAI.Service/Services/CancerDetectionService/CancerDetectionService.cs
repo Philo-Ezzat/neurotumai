@@ -30,7 +30,7 @@ namespace NeuroTumAI.Service.Services.CancerDetectionService
 
         public async Task<byte[]> PredictCancerPDFAsync(MultipartFormDataContent form)
         {
-            var response = await _httpClient.PostAsync("http://192.168.1.10:5000/analyze", form);
+            var response = await _httpClient.PostAsync("http://167.86.67.49:5000/analyze", form);
 
             if (!response.IsSuccessStatusCode)
             {
